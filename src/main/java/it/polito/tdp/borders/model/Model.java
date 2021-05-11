@@ -22,12 +22,12 @@ import it.polito.tdp.borders.db.BordersDAO;
 public class Model {
 	SimpleGraph <Country, DefaultEdge> grafo;
 	BordersDAO dao;
-	Map <String, Country> idMap;
+	Map <Integer, Country> idMap;
 	int connesse;
 	Map <Country, Country> visita;
 	public Model() {
 		dao= new BordersDAO();
-		idMap= new HashMap <String, Country>();
+		idMap= new HashMap <Integer, Country>();
 		dao.loadAllCountries(idMap);
 		
 	}
@@ -37,7 +37,7 @@ public class Model {
 		// Aggiunta vertici
 		Graphs.addAllVertices(this.grafo, dao.getVertici(idMap, year));
 		
-		for(Rotta r: dao.getRotta(idMap)) {
+		for(Rotta r: dao.getRotta(idMap, year)) {
 			if(grafo.containsVertex(r.getC1())&&grafo.containsVertex(r.getC2())) {
 				DefaultEdge e=this.grafo.getEdge(r.getC1(), r.getC2());
 				if(e==null) {
@@ -61,13 +61,13 @@ public class Model {
 		
 		
 	}
-	public List <Country> contryRaggiungibili(final Country partenza){
+	public List <Country> contryRaggiungibili( Country partenza){
 		List <Country> result= new LinkedList <Country>();
 		
-		DepthFirstIterator <Country, DefaultEdge> dfv= new DepthFirstIterator <Country, DefaultEdge>(this.grafo, partenza);
+		BreadthFirstIterator <Country, DefaultEdge> bfv= new BreadthFirstIterator <Country, DefaultEdge>(this.grafo, partenza);
 		
-		while(dfv.hasNext()) {
-			Country c= dfv.next();
+		while(bfv.hasNext()) {
+			Country c= bfv.next();
 			result.add(c);
 		}
 		
@@ -90,13 +90,11 @@ public class Model {
 		this.dao = dao;
 	}
 
-	public Map<String, Country> getIdMap() {
+	public Map<Integer, Country> getIdMap() {
 		return idMap;
 	}
 
-	public void setIdMap(Map<String, Country> idMap) {
-		this.idMap = idMap;
-	}
+	
 
 	public int getConnesse() {
 		ConnectivityInspector <Country, DefaultEdge> cI = new ConnectivityInspector<Country, DefaultEdge>(this.grafo);

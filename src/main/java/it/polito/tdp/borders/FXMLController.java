@@ -66,13 +66,29 @@ public class FXMLController {
     }
     @FXML
     void doRaggiungibili(ActionEvent event) {
-    	Country c= this.cbmBox.getSelectionModel().getSelectedItem();
-    	List <Country> raggiungibili= new LinkedList <Country>(this.model.contryRaggiungibili(c));
-    	String result="";
-    	for(Country cc: raggiungibili) {
-    		result=result+cc.toString()+"\n";
+    	String annoS= this.txtAnno.getText();
+    	int anno;
+    	try {
+    		anno=Integer.parseInt(annoS);
+    	}catch(NumberFormatException e) {
+    		this.txtResult.setText("Inserisci un anno tra 1816 e il 2016");
+    		return;
     	}
-    	this.txtResult.setText(result);
+    	if(anno>=1816 && anno<=2016) {
+    		this.model.creaGrafo(anno);
+    	}
+    	Country c= this.cbmBox.getSelectionModel().getSelectedItem();
+    	try {
+			List<Country> reachableCountries = model.contryRaggiungibili(c);
+			for (Country country : reachableCountries) {
+				txtResult.appendText(String.format("%s\n", country));
+			}
+		} catch (RuntimeException e) {
+			
+			txtResult.setText("Il paese selezionato non è nel country.");
+		}
+    	
+    	txtResult.appendText("Stati raggiungibili da: "+c.toString()+"sono: "+this.model.contryRaggiungibili(c).size());
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
