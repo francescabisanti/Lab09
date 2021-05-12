@@ -50,6 +50,8 @@ public class FXMLController {
     	}
     	if(anno>=1816 && anno<=2016) {
     		this.model.creaGrafo(anno);
+    		this.cbmBox.getItems().addAll(model.getDao().getVertici(model.getIdMap(), anno));
+        	
     		
     		String result="";
     		for(Country c: model.getGrafo().vertexSet()) {
@@ -76,6 +78,7 @@ public class FXMLController {
     	}
     	if(anno>=1816 && anno<=2016) {
     		this.model.creaGrafo(anno);
+    		this.cbmBox.getItems().addAll(model.getDao().getVertici(model.getIdMap(), anno));
     	}
     	Country c= this.cbmBox.getSelectionModel().getSelectedItem();
     	try {
@@ -85,7 +88,7 @@ public class FXMLController {
 			}
 		} catch (RuntimeException e) {
 			
-			txtResult.setText("Il paese selezionato non è nel country.");
+			txtResult.setText("Il paese selezionato non è nel grafo.");
 		}
     	
     	txtResult.appendText("Stati raggiungibili da: "+c.toString()+"sono: "+this.model.contryRaggiungibili(c).size());
@@ -101,7 +104,6 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
-    	this.cbmBox.getItems().addAll(model.getDao().loadAllCountries());
-    	
+    	this.cbmBox.getItems().addAll(this.model.getDao().loadAllCountries());
     }
 }
